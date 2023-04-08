@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/xuecheng-plus-base/xuecheng-plus-base.iml" filepath="$PROJECT_DIR$/xuecheng-plus-base/xuecheng-plus-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xuecheng-plus-parent/xuecheng-plus-parent.iml" filepath="$PROJECT_DIR$/xuecheng-plus-parent/xuecheng-plus-parent.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/xuecheng-plus-project.iml" filepath="$PROJECT_DIR$/.idea/xuecheng-plus-project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xuecheng-plus-parent/xuecheng-puls-parent.iml" filepath="$PROJECT_DIR$/xuecheng-plus-parent/xuecheng-puls-parent.iml" />
     </modules>
   </component>
 </project>
