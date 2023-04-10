@@ -14,6 +14,7 @@ import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseCategory;
 import com.xuecheng.content.model.po.CourseMarket;
 import com.xuecheng.content.service.CourseBaseInfoService;
+import com.xuecheng.exception.XueChengPlusException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -75,7 +76,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
         //合法性校验
         if (StringUtils.isBlank(dto.getName())) {
-            throw new RuntimeException("课程名称为空");
+            XueChengPlusException.cast("课程名称不能为空");
         }
 
         if (StringUtils.isBlank(dto.getMt())) {
