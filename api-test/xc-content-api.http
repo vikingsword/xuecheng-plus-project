@@ -47,6 +47,10 @@ Content-Type: application/json
 GET {{content_host}}/content/teachplan/117/tree-nodes
 
 
+### 删除某个课程的课程计划
+DELETE {{content_host}}/content/teachplan/281
+
+
 
 
 
