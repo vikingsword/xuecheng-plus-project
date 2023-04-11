@@ -73,9 +73,74 @@ public class TeachplanServiceImpl implements TeachplanService {
             teachplanMediaMapper.delete(mediaWrapper);
         } else {
             // 不能删除，返回自定义异常 todo 返回errCode
-            XueChengPlusException.cast( "课程计划信息还有子级信息，无法操作");
+            XueChengPlusException.cast("课程计划信息还有子级信息，无法操作");
         }
     }
+
+    @Override
+    public void moveTeachplan(String moveDirection, Long id) {
+        // 获取当前课程计划的 order by 如果在最顶上或者最底下则不动
+        Teachplan teachplan = teachplanMapper.selectById(id);
+        Long parentid = teachplan.getParentid();
+        Integer orderby = teachplan.getOrderby();
+        Integer teachplanCount = getTeachplanCount(teachplan.getCourseId(), teachplan.getParentid());
+        if (orderby == 1 && moveDirection.equals("movedown")) {
+            // 向下移动
+            moveDown(parentid,orderby);
+        } else if (orderby.equals(teachplanCount) && moveDirection.equals("moveup")) {
+            // 向上移动
+            moveUp(parentid,orderby);
+        } else if (moveDirection.equals("moveup")) {
+            // 向上移动
+            moveUp(parentid,orderby);
+        } else if (moveDirection.equals("movedown")) {
+            // 向下移动
+            moveDown(parentid,orderby);
+        } else {
+            // do nothing
+        }
+
+    }
+
+    private void moveUp(Long parentId, Integer orderBy) {
+        LambdaQueryWrapper<Teachplan> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Teachplan::getOrderby, orderBy - 1).eq(Teachplan::getParentid, parentId);
+        Teachplan teachplan = teachplanMapper.selectOne(wrapper);
+        LambdaQueryWrapper<Teachplan> wrapper2 = new LambdaQueryWrapper<>();
+        wrapper2.eq(Teachplan::getOrderby, orderBy).eq(Teachplan::getParentid, parentId);
+        Teachplan teachplan2 = teachplanMapper.selectOne(wrapper2);
+
+        teachplan.setOrderby(orderBy);
+        teachplanMapper.updateById(teachplan);
+
+        teachplan2.setOrderby(orderBy - 1);
+        teachplanMapper.updateById(teachplan2);
+    }
+
+
+    private void moveDown(Long parentId, Integer orderBy) {
+        LambdaQueryWrapper<Teachplan> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Teachplan::getOrderby,orderBy + 1).eq(Teachplan::getParentid,parentId);
+        Teachplan teachplan = teachplanMapper.selectOne(wrapper);
+        LambdaQueryWrapper<Teachplan> wrapper2 = new LambdaQueryWrapper<>();
+        wrapper2.eq(Teachplan::getOrderby,orderBy).eq(Teachplan::getParentid,parentId);
+        Teachplan teachplan2 = teachplanMapper.selectOne(wrapper2);
+
+        teachplan.setOrderby(orderBy);
+        teachplanMapper.updateById(teachplan);
+
+        teachplan2.setOrderby(orderBy + 1);
+        teachplanMapper.updateById(teachplan2);
+
+    }
+
+//    private void move(Long parentId, Integer orderBy, Integer pace) {
+//        LambdaQueryWrapper<Teachplan> wrapper = new LambdaQueryWrapper<>();
+//        wrapper.eq(Teachplan::getOrderby, orderBy + pace).eq(Teachplan::getParentid, parentId);
+//        Teachplan teachplan = teachplanMapper.selectOne(wrapper);
+//        teachplan.setOrderby(orderBy);
+//        teachplanMapper.updateById(teachplan);
+//    }
 
     /**
      * @param courseId 课程id
