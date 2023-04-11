@@ -20,7 +20,7 @@ import java.util.List;
  * @time 2023/4/8 14:31
  */
 @SpringBootTest
-public class CourseBaseMapperTests {
+public class CourseBaseMapperTest {
 
     @Autowired
     private CourseBaseMapper courseBaseMapper;
