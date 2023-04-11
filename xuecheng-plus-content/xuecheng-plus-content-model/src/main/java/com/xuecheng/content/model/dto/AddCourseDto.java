@@ -69,6 +69,7 @@ public class AddCourseDto {
 
  @ApiModelProperty(value = "微信")
  private String wechat;
+
  @ApiModelProperty(value = "电话")
  private String phone;
 
