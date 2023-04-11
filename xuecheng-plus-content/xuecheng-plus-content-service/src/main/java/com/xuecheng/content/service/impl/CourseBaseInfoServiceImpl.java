@@ -4,16 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
-import com.xuecheng.content.mapper.CourseBaseMapper;
-import com.xuecheng.content.mapper.CourseCategoryMapper;
-import com.xuecheng.content.mapper.CourseMarketMapper;
+import com.xuecheng.content.mapper.*;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
-import com.xuecheng.content.model.po.CourseBase;
-import com.xuecheng.content.model.po.CourseCategory;
-import com.xuecheng.content.model.po.CourseMarket;
+import com.xuecheng.content.model.po.*;
 import com.xuecheng.content.service.CourseBaseInfoService;
 import com.xuecheng.exception.XueChengPlusException;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +38,12 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
     @Autowired
     private CourseCategoryMapper courseCategoryMapper;
+
+    @Autowired
+    private TeachplanMapper teachplanMapper;
+
+    @Autowired
+    private CourseTeacherMapper courseTeacherMapper;
 
     @Override
     public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto) {
@@ -192,6 +194,29 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         //查询课程信息
         CourseBaseInfoDto courseBaseInfo = this.getCourseBaseInfo(courseId);
         return courseBaseInfo;
+
+    }
+
+    @Transactional
+    @Override
+    public void deleteCourse(Long companyId, Long courseId) {
+        // 课程的审核状态为未提交(202002)时方可删除。 todo 魔法值
+        // 删除课程需要删除课程相关的基本信息、营销信息、课程计划、课程教师信息。
+        LambdaQueryWrapper<CourseBase> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(CourseBase::getId, courseId);
+        CourseBase course = courseBaseMapper.selectOne(wrapper);
+        if ("202002".equals(course.getAuditStatus())) {
+            courseBaseMapper.deleteById(courseId);
+            courseMarketMapper.deleteById(courseId);
+
+            LambdaQueryWrapper<Teachplan> teachplanWrapper = new LambdaQueryWrapper<>();
+            teachplanWrapper.eq(Teachplan::getCourseId, courseId);
+            teachplanMapper.delete(teachplanWrapper);
+
+            LambdaQueryWrapper<CourseTeacher> teacherWrapper = new LambdaQueryWrapper<>();
+            teacherWrapper.eq(CourseTeacher::getCourseId, courseId);
+            courseTeacherMapper.delete(teacherWrapper);
+        }
 
     }
 

@@ -30,7 +30,6 @@ public class CourseBaseInfoController {
     @ApiOperation("课程查询接口")
     @PostMapping("/course/list")
     public PageResult<CourseBase> list(PageParams pageParams, @RequestBody(required = false) QueryCourseParamsDto courseParamsDto) {
-
         return courseBaseInfoService.queryCourseBaseList(pageParams, courseParamsDto);
     }
 
@@ -53,5 +52,11 @@ public class CourseBaseInfoController {
     public CourseBaseInfoDto modifyCourse(@RequestBody @Validated EditCourseDto editCourseDto) {
         Long companyId = 1232141425L;
         return courseBaseInfoService.updateCourseBase(companyId, editCourseDto);
+    }
+
+    @DeleteMapping("/course/{courseId}")
+    public void deleteCourse(@PathVariable Long courseId) {
+        Long companyId = 1232141425L;
+        courseBaseInfoService.deleteCourse(companyId, courseId);
     }
 }
