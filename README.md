@@ -1,2 +1,2 @@
 # xuecheng-plus-project
-this is a online-class project for practice
+this is an online-class project for myself practice
