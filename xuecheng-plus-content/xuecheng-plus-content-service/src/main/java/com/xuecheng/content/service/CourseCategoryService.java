@@ -10,6 +10,6 @@ import java.util.List;
  */
 public interface CourseCategoryService {
 
-    public List<CourseCategoryTreeDto> queryTreeNodes(String id);
+    List<CourseCategoryTreeDto> queryTreeNodes(String id);
 
 }
