@@ -1,4 +1,4 @@
-package com.xuecheng;
+package com.xuecheng.media;
 
 import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
