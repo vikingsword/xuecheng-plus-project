@@ -6,6 +6,7 @@ import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
+import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.exception.XueChengPlusException;
 import com.xuecheng.media.mapper.MediaFilesMapper;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
@@ -13,6 +14,7 @@ import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
 import com.xuecheng.media.service.MediaFileService;
+import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.UploadObjectArgs;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -182,7 +185,7 @@ public class MediaFileServiceImpl implements MediaFileService {
 
     }
 
-//    有网络访问的方法(addMediaFilesToMinIO)不要用事务控制,否则会占用数据库资源
+    //    有网络访问的方法(addMediaFilesToMinIO)不要用事务控制,否则会占用数据库资源
 //    @Transactional
     @Override
     public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath) {
@@ -220,4 +223,91 @@ public class MediaFileServiceImpl implements MediaFileService {
         return uploadFileResultDto;
 
     }
+
+
+    @Override
+    public RestResponse<Boolean> checkFile(String fileMd5) {
+        //查询文件信息
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(fileMd5);
+        if (mediaFiles != null) {
+            //桶
+            String bucket = mediaFiles.getBucket();
+            //存储目录
+            String filePath = mediaFiles.getFilePath();
+            //文件流
+            InputStream stream = null;
+            try {
+                stream = minioClient.getObject(
+                        GetObjectArgs.builder()
+                                .bucket(bucket)
+                                .object(filePath)
+                                .build());
+
+                if (stream != null) {
+                    //文件已存在
+                    return RestResponse.success(true);
+                }
+            } catch (Exception e) {
+
+            }
+        }
+        //文件不存在
+        return RestResponse.success(false);
+    }
+
+
+    @Override
+    public RestResponse<Boolean> checkChunk(String fileMd5, int chunkIndex) {
+
+        //得到分块文件目录
+        String chunkFileFolderPath = getChunkFileFolderPath(fileMd5);
+        //得到分块文件的路径
+        String chunkFilePath = chunkFileFolderPath + chunkIndex;
+
+        //文件流
+        InputStream fileInputStream = null;
+        try {
+            fileInputStream = minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(bucket_files)
+                            .object(chunkFilePath)
+                            .build());
+
+            if (fileInputStream != null) {
+                //分块已存在
+                return RestResponse.success(true);
+            }
+        } catch (Exception e) {
+
+        }
+        //分块未存在
+        return RestResponse.success(false);
+    }
+
+    //得到分块文件的目录
+    private String getChunkFileFolderPath(String fileMd5) {
+        return fileMd5.substring(0, 1) + "/" + fileMd5.substring(1, 2) + "/" + fileMd5 + "/" + "chunk" + "/";
+    }
+
+
+    @Override
+    public RestResponse uploadChunk(String fileMd5, int chunk, String localChunkFilePath) {
+
+        //得到分块文件的目录路径
+        String chunkFileFolderPath = getChunkFileFolderPath(fileMd5);
+        //得到分块文件的路径
+        String chunkFilePath = chunkFileFolderPath + chunk;
+        //mimeType
+        String mimeType = getMimeType(null);
+        //将文件存储至minIO
+        boolean b = addMediaFilesToMinIO(localChunkFilePath, mimeType, bucket_files, chunkFilePath);
+        if (!b) {
+            log.debug("上传分块文件失败:{}", chunkFilePath);
+            return RestResponse.validfail(false, "上传分块失败");
+        }
+        log.debug("上传分块文件成功:{}",chunkFilePath);
+        return RestResponse.success(true);
+
+    }
+
 }
