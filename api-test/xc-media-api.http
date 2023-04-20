@@ -18,3 +18,14 @@ Content-Disposition: form-data; name="filedata"; filename="1.jpg"
 Content-Type: application/octet-stream
 
 < F:/Wallpaper/4K/2.jpg
+
+
+### 课程计划绑定视频
+POST {{media_host}}/media/teachplan/association/media
+Content-Type: application/json
+
+{
+  "mediaId": "",
+  "fileName": "",
+  "teachplanId": ""
+}
