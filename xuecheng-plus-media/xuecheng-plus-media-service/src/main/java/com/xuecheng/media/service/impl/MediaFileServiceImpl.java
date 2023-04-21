@@ -150,6 +150,13 @@ public class MediaFileServiceImpl implements MediaFileService {
         return false;
     }
 
+
+    @Override
+    public MediaFiles getFileById(String mediaId) {
+        return mediaFilesMapper.selectById(mediaId);
+    }
+
+
     /**
      * @param companyId           机构id
      * @param fileMd5             文件md5值
