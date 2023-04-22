@@ -9,4 +9,15 @@ POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&gr
 
 
 ###校验jwt令牌
-POST {{auth_host}}/auth/oauth/check_token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsieHVlY2hlbmctcGx1cyJdLCJ1c2VyX25hbWUiOiJ6aGFuZ3NhbiIsInNjb3BlIjpbImFsbCJdLCJleHAiOjE2ODIxODQyODgsImF1dGhvcml0aWVzIjpbInAxIl0sImp0aSI6IjZhOWY0MWI1LTkxNTgtNGIxMC1hYjQ0LWJkY2I2MzllNGYzNSIsImNsaWVudF9pZCI6IlhjV2ViQXBwIn0.fuFM5IBUJu6S8jZWgsaHxowdJyaw-j4OYPkL5znsuQY
+POST {{auth_host}}/auth/oauth/check_token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsieHVlY2hlbmctcGx1cyJdLCJ1c2VyX25hbWUiOiJ7XCJjb21wYW55SWRcIjpcIjEyMzIxNDE0MjVcIixcImNyZWF0ZVRpbWVcIjpcIjIwMjItMDktMjhUMDg6MzI6MDNcIixcImlkXCI6XCI1MlwiLFwibmFtZVwiOlwiTeiAgeW4iFwiLFwic2V4XCI6XCIxXCIsXCJzdGF0dXNcIjpcIlwiLFwidXNlcm5hbWVcIjpcInQxXCIsXCJ1dHlwZVwiOlwiMTAxMDAyXCJ9Iiwic2NvcGUiOlsiYWxsIl0sImV4cCI6MTY4MjIwMzEwOSwiYXV0aG9yaXRpZXMiOlsicDEiXSwianRpIjoiNmFiNTAyZmMtM2QzNS00NzdiLThjNTgtZGVlMzVkMDE2Mzk5IiwiY2xpZW50X2lkIjoiWGNXZWJBcHAifQ.qRiTTXtYF31u0s_IJ1KlEJhSB4OxsesMx0pQanKw1LY
+
+
+### 密码模式
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username=t1&password=111111
+
+
+
+################扩展认证请求参数后######################
+###密码模式
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username={"username":"stu1","authType":"password","password":"111111"}
+
