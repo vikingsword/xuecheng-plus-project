@@ -12,6 +12,7 @@ import com.xuecheng.exception.ValidationGroups;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +45,9 @@ public class CourseBaseInfoController {
     @ApiOperation("根据课程id查询接口")
     @GetMapping("/course/{courseId}")
     public CourseBaseInfoDto getCourseById(@PathVariable Long courseId) {
+        //取出当前用户身份
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(principal);
         return courseBaseInfoService.getCourseBaseInfo(courseId);
     }
 
