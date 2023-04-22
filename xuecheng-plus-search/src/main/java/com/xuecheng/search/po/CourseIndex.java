@@ -71,7 +71,6 @@ public class CourseIndex implements Serializable {
     private String stName;
 
 
-
     /**
      * 课程等级
      */
@@ -95,7 +94,7 @@ public class CourseIndex implements Serializable {
     /**
      * 发布时间
      */
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createDate;
 

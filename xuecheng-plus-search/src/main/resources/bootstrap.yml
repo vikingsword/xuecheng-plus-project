@@ -1,14 +1,16 @@
 spring:
   application:
     name: search
+  profiles:
+    active: dev
   cloud:
     nacos:
       server-addr: 192.168.101.65:8848
       discovery:
-        namespace: dev402
+        namespace: dev
         group: xuecheng-plus-project
       config:
-        namespace: dev402
+        namespace: dev
         group: xuecheng-plus-project
         file-extension: yaml
         refresh-enabled: true
@@ -20,5 +22,4 @@ spring:
             group: xuecheng-plus-common
             refresh: true
 
-  profiles:
-    active: dev
+
