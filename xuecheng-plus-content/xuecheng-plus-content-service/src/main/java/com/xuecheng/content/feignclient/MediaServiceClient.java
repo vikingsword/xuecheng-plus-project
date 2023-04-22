@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @description 媒资管理服务远程接口
  * @date 2022/9/20 20:29
  */
-@FeignClient(value = "media-api", configuration = MultipartSupportConfig.class)
+@FeignClient(value = "media-api", configuration = MultipartSupportConfig.class, fallbackFactory = MediaServiceClientFallbackFactory.class)
 public interface MediaServiceClient {
 
     @RequestMapping(value = "/media/upload/coursefile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

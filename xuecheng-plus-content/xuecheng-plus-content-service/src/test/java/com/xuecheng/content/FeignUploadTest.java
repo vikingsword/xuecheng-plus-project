@@ -26,7 +26,10 @@ public class FeignUploadTest {
     public void test() {
 
         MultipartFile multipartFile = MultipartSupportConfig.getMultipartFile(new File("E:\\Dev\\Java\\Project\\Practice\\online-class\\资料\\day09 页面静态化 认证授权 SpringSecurity\\mess\\18.html"));
-        mediaServiceClient.uploadFile(multipartFile, "course/18.html");
+        String upload = mediaServiceClient.uploadFile(multipartFile, "course/18.html");
+        if (upload == null) {
+            System.out.println("降级");
+        }
     }
 
 }
