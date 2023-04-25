@@ -5,10 +5,10 @@ import lombok.Data;
 import lombok.ToString;
 
 /**
- * @description 我的课程表模型类
  * @author Mr.M
- * @date 2022/10/2 16:09
  * @version 1.0
+ * @description 我的课程表模型类
+ * @date 2022/10/2 16:09
  */
 @Data
 @ToString

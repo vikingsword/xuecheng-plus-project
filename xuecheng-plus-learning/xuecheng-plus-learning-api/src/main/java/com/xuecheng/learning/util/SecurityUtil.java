@@ -21,20 +21,19 @@ public class SecurityUtil {
         //拿jwt中的用户身份
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (principal instanceof String){
+        if (principal instanceof String) {
             String jsonString = (String) principal;
             XcUser xcUser = null;
             try {
                 xcUser = JSON.parseObject(jsonString, XcUser.class);
             } catch (Exception e) {
-                log.debug("解析jwt中的用户身份无法转成XcUser对象:{}",jsonString);
+                log.debug("解析jwt中的用户身份无法转成XcUser对象:{}", jsonString);
             }
             return xcUser;
 
         }
         return null;
     }
-
 
 
     @Data
