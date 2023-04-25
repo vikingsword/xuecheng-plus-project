@@ -43,4 +43,7 @@ public class CheckCodeController {
         Boolean isSuccess = picCheckCodeService.verify(key, code);
         return isSuccess;
     }
+
+    // @PostMapping(value = "phone")
+
 }
