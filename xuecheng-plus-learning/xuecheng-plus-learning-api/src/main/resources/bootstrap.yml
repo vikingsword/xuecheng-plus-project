@@ -4,6 +4,10 @@ spring:
     name: learning-api
   profiles:
     active: dev
+  # 多个feign接口使用 @FeignClient 注解调用同一个名称的微服务时，启动时会引发以下异常。
+  # The bean 'content-api.FeignClientSpecification' could not be registered. A bean with that name has already been defined and overriding is disabled.
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     nacos:
       server-addr: 192.168.101.65:8848
