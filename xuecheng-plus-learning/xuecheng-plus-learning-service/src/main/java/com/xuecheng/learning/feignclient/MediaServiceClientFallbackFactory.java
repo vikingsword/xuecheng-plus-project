@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 /**
  * @author Mr.M
  * @version 1.0
- * @description TODO
+ * @description MediaServiceClientFallbackFactory
  * @date 2022/10/27 9:05
  */
 @Slf4j
@@ -19,7 +19,7 @@ public class MediaServiceClientFallbackFactory implements FallbackFactory<MediaS
         return new MediaServiceClient() {
             @Override
             public RestResponse<String> getPlayUrlByMediaId(String mediaId) {
-                log.error("远程调用媒资管理服务熔断异常：{}", throwable.getMessage());
+                log.error("远程调用媒资管理服务熔断异常：{}",throwable.getMessage());
                 return null;
             }
         };

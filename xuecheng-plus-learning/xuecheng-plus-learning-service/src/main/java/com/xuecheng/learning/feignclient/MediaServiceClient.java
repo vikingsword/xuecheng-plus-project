@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
+ * @description 媒资管理服务远程接口
  * @author Mr.M
+ * @date 2022/9/20 20:29
  * @version 1.0
- * @description TODO
- * @date 2022/10/27 9:04
  */
 @FeignClient(value = "media-api", fallbackFactory = MediaServiceClientFallbackFactory.class)
 @RequestMapping("/media")
