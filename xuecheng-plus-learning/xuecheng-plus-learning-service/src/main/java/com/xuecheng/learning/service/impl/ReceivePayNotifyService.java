@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-
 /**
  * @author Mr.M
  * @version 1.0
@@ -36,7 +35,7 @@ public class ReceivePayNotifyService {
     MyCourseTablesService myCourseTablesService;
 
 
-    //监听消息队列接收支付结果通知
+    //监听消息队列接收支付结果通知 todo mq queue未生成
     @RabbitListener(queues = PayNotifyConfig.PAYNOTIFY_QUEUE)
     public void receive(Message message, Channel channel) {
         try {
@@ -55,10 +54,10 @@ public class ReceivePayNotifyService {
         //这里只处理支付结果通知
         if (PayNotifyConfig.MESSAGE_TYPE.equals(messageType) && "60201".equals(businessKey2)) {
             //选课记录id
-            String choosecourseId = mqMessage.getBusinessKey1();
+            String chooseCourseId = mqMessage.getBusinessKey1();
             //添加选课
-            boolean b = myCourseTablesService.saveChooseCourseSuccess(choosecourseId);
-            if(!b){
+            boolean b = myCourseTablesService.saveChooseCourseSuccess(chooseCourseId);
+            if (!b) {
                 //添加选课失败，抛出异常，消息重回队列
                 XueChengPlusException.cast("收到支付结果，添加选课失败");
             }
