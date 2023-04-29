@@ -41,6 +41,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Mr.M
@@ -316,19 +317,18 @@ public class CoursePublishServiceImpl implements CoursePublishService {
         Object jsonObj = redisTemplate.opsForValue().get("course:" + courseId);
         if (jsonObj != null) {
             String jsonString = jsonObj.toString();
-            System.out.println("=================从缓存查=================");
+            if (jsonString.equals("null"))
+                return null;
             CoursePublish coursePublish = JSON.parseObject(jsonString, CoursePublish.class);
             return coursePublish;
         } else {
-            System.out.println("从数据库查询...");
             //从数据库查询
+            System.out.println("从数据库查询数据...");
             CoursePublish coursePublish = getCoursePublish(courseId);
-            if (coursePublish != null) {
-                redisTemplate.opsForValue().set("course:" + courseId, JSON.toJSONString(coursePublish));
-            }
+            //设置过期时间300秒
+            redisTemplate.opsForValue().set("course:" + courseId, JSON.toJSONString(coursePublish), 30, TimeUnit.SECONDS);
             return coursePublish;
         }
+
     }
-
-
 }
