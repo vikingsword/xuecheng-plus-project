@@ -41,7 +41,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -313,23 +312,52 @@ public class CoursePublishServiceImpl implements CoursePublishService {
         return coursePublish;
     }
 
+//    public CoursePublish getCoursePublishCache(Long courseId) {
+//        //查询缓存
+//        Object jsonObj = redisTemplate.opsForValue().get("course:" + courseId);
+//        if (jsonObj != null) {
+//            String jsonString = jsonObj.toString();
+//            if (jsonString.equals("null"))
+//                return null;
+//            CoursePublish coursePublish = JSON.parseObject(jsonString, CoursePublish.class);
+//            return coursePublish;
+//        } else {
+//            //从数据库查询
+//            System.out.println("从数据库查询数据...");
+//            CoursePublish coursePublish = getCoursePublish(courseId);
+//            //设置过期时间300秒
+//            redisTemplate.opsForValue().set("course:" + courseId, JSON.toJSONString(coursePublish), 300 + new Random().nextInt(100), TimeUnit.SECONDS);
+//            return coursePublish;
+//        }
+//
+//    }
+
+
     public CoursePublish getCoursePublishCache(Long courseId) {
+
         //查询缓存
         Object jsonObj = redisTemplate.opsForValue().get("course:" + courseId);
         if (jsonObj != null) {
             String jsonString = jsonObj.toString();
-            if (jsonString.equals("null"))
-                return null;
             CoursePublish coursePublish = JSON.parseObject(jsonString, CoursePublish.class);
             return coursePublish;
         } else {
-            //从数据库查询
-            System.out.println("从数据库查询数据...");
-            CoursePublish coursePublish = getCoursePublish(courseId);
-            //设置过期时间300秒
-            redisTemplate.opsForValue().set("course:" + courseId, JSON.toJSONString(coursePublish), 300 + new Random().nextInt(100), TimeUnit.SECONDS);
-            return coursePublish;
+            synchronized (this) {
+                Object jsonObj2 = redisTemplate.opsForValue().get("course:" + courseId);
+                if (jsonObj2 != null) {
+                    String jsonString = jsonObj2.toString();
+                    CoursePublish coursePublish = JSON.parseObject(jsonString, CoursePublish.class);
+                    return coursePublish;
+                }
+                System.out.println("=========从数据库查询==========");
+                //从数据库查询
+                CoursePublish coursePublish = getCoursePublish(courseId);
+                //设置过期时间300秒
+                redisTemplate.opsForValue().set("course:" + courseId, JSON.toJSONString(coursePublish), 300, TimeUnit.SECONDS);
+                return coursePublish;
+            }
         }
+
 
     }
 }
