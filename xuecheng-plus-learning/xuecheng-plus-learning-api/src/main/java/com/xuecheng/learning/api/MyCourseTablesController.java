@@ -32,17 +32,20 @@ public class MyCourseTablesController {
     @Autowired
     MyCourseTablesService courseTablesService;
 
+    @Autowired
+    MyCourseTablesService myCourseTablesService;
+
 
     @ApiOperation("添加选课")
     @PostMapping("/choosecourse/{courseId}")
     public XcChooseCourseDto addChooseCourse(@PathVariable("courseId") Long courseId) {
         //登录用户
         SecurityUtil.XcUser user = SecurityUtil.getUser();
-        if(user == null){
+        if (user == null) {
             XueChengPlusException.cast("请登录后继续选课");
         }
         String userId = user.getId();
-        return  courseTablesService.addChooseCourse(userId, courseId);
+        return courseTablesService.addChooseCourse(userId, courseId);
 
     }
 
@@ -51,19 +54,28 @@ public class MyCourseTablesController {
     public XcCourseTablesDto getLearnStatus(@PathVariable("courseId") Long courseId) {
         //登录用户
         SecurityUtil.XcUser user = SecurityUtil.getUser();
-        if(user == null){
+        if (user == null) {
             XueChengPlusException.cast("请登录后继续选课");
         }
         String userId = user.getId();
-        return  courseTablesService.getLearningStatus(userId, courseId);
+        return courseTablesService.getLearningStatus(userId, courseId);
 
     }
 
 
     @ApiOperation("我的课程表")
     @GetMapping("/mycoursetable")
-    public PageResult<XcCourseTables> mycoursetable(MyCourseTableParams params) {
-        return null;
+    public PageResult<XcCourseTables> myCourseTables(MyCourseTableParams params) {
+        //登录用户
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        if (user == null) {
+            XueChengPlusException.cast("请登录后继续选课");
+        }
+        String userId = user.getId();
+        //设置当前的登录用户
+        params.setUserId(userId);
+
+        return myCourseTablesService.myCourseTables(params);
     }
 
 }

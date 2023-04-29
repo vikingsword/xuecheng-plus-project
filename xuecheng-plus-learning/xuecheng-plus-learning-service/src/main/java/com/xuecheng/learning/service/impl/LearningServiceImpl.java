@@ -9,11 +9,13 @@ import com.xuecheng.learning.service.LearningService;
 import com.xuecheng.learning.service.MyCourseTablesService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author vikingar
  * @time 2023/4/28 22:07
  */
+@Service
 public class LearningServiceImpl implements LearningService {
 
     @Autowired
