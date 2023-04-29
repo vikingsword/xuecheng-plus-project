@@ -41,6 +41,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -326,7 +327,7 @@ public class CoursePublishServiceImpl implements CoursePublishService {
             System.out.println("从数据库查询数据...");
             CoursePublish coursePublish = getCoursePublish(courseId);
             //设置过期时间300秒
-            redisTemplate.opsForValue().set("course:" + courseId, JSON.toJSONString(coursePublish), 30, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set("course:" + courseId, JSON.toJSONString(coursePublish), 300 + new Random().nextInt(100), TimeUnit.SECONDS);
             return coursePublish;
         }
 
