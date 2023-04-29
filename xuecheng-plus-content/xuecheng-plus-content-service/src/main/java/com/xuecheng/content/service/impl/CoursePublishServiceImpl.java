@@ -26,6 +26,8 @@ import freemarker.template.Template;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -79,6 +81,9 @@ public class CoursePublishServiceImpl implements CoursePublishService {
 
     @Autowired
     RedisTemplate redisTemplate;
+
+    @Autowired
+    RedissonClient redissonClient;
 
 
     @Override
@@ -333,6 +338,33 @@ public class CoursePublishServiceImpl implements CoursePublishService {
 //    }
 
 
+//    public CoursePublish getCoursePublishCache(Long courseId) {
+//
+//        //查询缓存
+//        Object jsonObj = redisTemplate.opsForValue().get("course:" + courseId);
+//        if (jsonObj != null) {
+//            String jsonString = jsonObj.toString();
+//            CoursePublish coursePublish = JSON.parseObject(jsonString, CoursePublish.class);
+//            return coursePublish;
+//        } else {
+//            synchronized (this) {
+//                Object jsonObj2 = redisTemplate.opsForValue().get("course:" + courseId);
+//                if (jsonObj2 != null) {
+//                    String jsonString = jsonObj2.toString();
+//                    CoursePublish coursePublish = JSON.parseObject(jsonString, CoursePublish.class);
+//                    return coursePublish;
+//                }
+//                System.out.println("=========从数据库查询==========");
+//                //从数据库查询
+//                CoursePublish coursePublish = getCoursePublish(courseId);
+//                //设置过期时间300秒
+//                redisTemplate.opsForValue().set("course:" + courseId, JSON.toJSONString(coursePublish), 300, TimeUnit.SECONDS);
+//                return coursePublish;
+//            }
+//        }
+//    }
+
+
     public CoursePublish getCoursePublishCache(Long courseId) {
 
         //查询缓存
@@ -342,7 +374,10 @@ public class CoursePublishServiceImpl implements CoursePublishService {
             CoursePublish coursePublish = JSON.parseObject(jsonString, CoursePublish.class);
             return coursePublish;
         } else {
-            synchronized (this) {
+
+            RLock lock = redissonClient.getLock("courseQueryLock:" + courseId);
+            lock.lock();
+            try {
                 Object jsonObj2 = redisTemplate.opsForValue().get("course:" + courseId);
                 if (jsonObj2 != null) {
                     String jsonString = jsonObj2.toString();
@@ -355,9 +390,11 @@ public class CoursePublishServiceImpl implements CoursePublishService {
                 //设置过期时间300秒
                 redisTemplate.opsForValue().set("course:" + courseId, JSON.toJSONString(coursePublish), 300, TimeUnit.SECONDS);
                 return coursePublish;
+            } finally {
+                // 手动释放锁
+                lock.unlock();
             }
+
         }
-
-
     }
 }
